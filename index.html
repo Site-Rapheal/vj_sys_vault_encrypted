@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Encrypted Vault</title>
+    <style>
+        :root { --bg-main: #050806; --card-bg: #0c1410; --text-main: #e2e8f0; --text-light: #64748b; --neon-green: #00ff66; --border-dark: #1f3b28; --input-bg: #030504; --focus-glow: rgba(0, 255, 102, 0.2); --btn-glow: rgba(0, 255, 102, 0.4); }
+        body { font-family: 'Segoe UI', Roboto, sans-serif; background: radial-gradient(circle at top, #0d1a12 0%, var(--bg-main) 100%); color: var(--text-main); display: flex; justify-content: center; align-items: center; min-height: 100vh; margin: 0; padding: 20px; box-sizing: border-box; }
+        .card { background: var(--card-bg); padding: 40px; border-radius: 16px; border: 1px solid var(--border-dark); box-shadow: 0 0 30px rgba(0,0,0,0.8), inset 0 0 20px rgba(0,255,102,0.02); width: 100%; max-width: 500px; }
+        .header { margin-bottom: 30px; border-bottom: 1px solid var(--border-dark); padding-bottom: 20px; }
+        .title-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px; }
+        h2 { margin: 0; font-size: 26px; color: var(--text-main); font-weight: 700; letter-spacing: 1px; }
+        .badge { display: inline-flex; align-items: center; gap: 6px; background: rgba(0, 255, 102, 0.1); color: var(--neon-green); border: 1px solid rgba(0, 255, 102, 0.3); padding: 6px 12px; border-radius: 6px; font-size: 12px; font-weight: 700; text-transform: uppercase; }
+        .badge svg { width: 14px; height: 14px; }
+        p.subtitle { margin: 0; color: var(--text-light); font-size: 14px; }
+        .form-group { margin-bottom: 20px; }
+        label { display: block; margin-bottom: 8px; font-weight: 600; font-size: 13px; color: #a7f3d0; text-transform: uppercase; letter-spacing: 0.5px; }
+        .input-wrapper { position: relative; margin-top: 8px; }
+        input { width: 100%; padding: 14px 48px 14px 16px; background: var(--input-bg); border: 1px solid var(--border-dark); border-radius: 8px; color: var(--neon-green); box-sizing: border-box; font-size: 15px; transition: all 0.3s; font-family: monospace; }
+        input:focus { border-color: var(--neon-green); outline: none; box-shadow: 0 0 15px var(--focus-glow); }
+        .toggle-btn { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); background: none; border: none; color: var(--text-light); cursor: pointer; padding: 4px; transition: color 0.2s; }
+        .toggle-btn:hover, .toggle-btn.active { color: var(--neon-green); }
+        button.primary-btn { width: 100%; padding: 18px; margin-top: 10px; background: #000; border: 1px solid var(--neon-green); border-radius: 8px; color: var(--neon-green); font-weight: 700; cursor: pointer; font-size: 16px; text-transform: uppercase; letter-spacing: 2px; transition: all 0.2s; box-shadow: 0 0 15px var(--btn-glow), inset 0 0 10px rgba(0,255,102,0.1); }
+        button.primary-btn:hover { background: var(--neon-green); color: #000; box-shadow: 0 0 25px var(--btn-glow); }
+        .output-box { margin-top: 25px; background: #030504; padding: 20px; border-radius: 8px; border: 1px solid var(--neon-green); color: var(--neon-green); white-space: pre-wrap; word-break: break-all; line-height: 1.6; font-family: monospace; font-size: 14px; position: relative; box-shadow: inset 0 0 15px rgba(0,255,102,0.05); }
+        .copy-btn { position: absolute; top: 12px; right: 12px; background: rgba(0,255,102,0.1); border: 1px solid var(--neon-green); color: var(--neon-green); padding: 6px 12px; border-radius: 4px; cursor: pointer; font-size: 12px; font-weight: bold; text-transform: uppercase; transition: all 0.2s; }
+        .copy-btn:hover { background: var(--neon-green); color: #000; }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+<div class="card">
+    <div class="header">
+        <div class="title-row">
+            <h2>UNLOCK.VAULT</h2>
+            <span class="badge">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4"/></svg>
+                Encrypted Payload
+            </span>
+        </div>
+        <p class="subtitle">Awaiting decryption sequence...</p>
+    </div>
+    
+    
+            <div class="form-group">
+                <label>Master Key: 3 Memorable Words</label>
+                <div class="input-wrapper">
+                    <input type="password" id="words" placeholder="Separated by spaces" required>
+                    <button type="button" class="toggle-btn" onclick="toggleVisibility('words', this)"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg></button>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Your  First Love Name?</label>
+                <div class="input-wrapper">
+                    <input type="password" id="ans1" placeholder="Secret Answer" required>
+                    <button type="button" class="toggle-btn" onclick="toggleVisibility('ans1', this)"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg></button>
+                </div>
+            </div>
+            <div class="form-group">
+                <label>Who Declare The Name Of My First Nephew &quot;Jaivik&quot;</label>
+                <div class="input-wrapper">
+                    <input type="password" id="ans2" placeholder="Secret Answer" required>
+                    <button type="button" class="toggle-btn" onclick="toggleVisibility('ans2', this)"><svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/></svg></button>
+                </div>
+            </div>
+    
+    <button class="primary-btn" onclick="decryptVault()">Decrypt Data</button>
+    
+    <div id="result-container" class="output-box hidden">
+        <button class="copy-btn" onclick="copyDecrypted()">Copy</button>
+        <div id="unlock-output"></div>
+    </div>
+</div>
+
+<script>
+    const ENCRYPTED_PAYLOAD = "d9240815090db2f8dc8c1e0a492c9f19c25f7a46d276ee6cd6005413b5335a3d5c7cdb2284ce26c69ba6d3b5a13dbd8d7fa0e5fee8aedf2bf275e1a2e2244526d0d9494c6791e88d8c0f8d1fa25a60bc8e07918f805bbbf1dd633b37a183673b7bd8ad871b02a95ccfd47c3ad1aa981965dbe9733168ff7a3301d5aba7caccda1cafd4e97879c4fb183804a8b41dc245579fcedd6fefb24b8d3a914a759185ce84796b32aa13c30c6e9829ae180f7712b59c6cea08e774b41a68a77ab3ffabea7c962ab67e0c9bb3ffcea26b4f810db8b3017329ac5c77892aecdf3583681969180ba07da68d75f5b2c201839e25132f5287b6fbeb880d2d7539f7c3489887b987c1ecdb6733acb2270149d547d4a9d5e68ddec0ebd729c79892419b56f0ab12c573071517f2c6aef5b1b73a8103ded49ccb1fc446e597317242ff9de27ccebf5002554fbd294f1e14b24cb94d47cd83a55464c4bdf1ad012406615732e074aec8f95f9f8ab67c682724dfbc021c109560ddcb1b21e5f68e3560fa6104015cc8d4634256d2402325e16ac8ab0febdd788900298e7d8c973b65fde60edc4ac56e4fc111ed0062d234b19169366c57500d05ccfab979c08cc94df3f11db223267ce18c2dd85de0a3daa2be608f0f082285c04169a3957f1cc32cafc25584c579e09ebdfad6800a2ed85d48db0f6333049156d6d77a4b85bdd7f8311ea751db3765e8cae9b26d4d7e2096c588c106d5ea4fa4a71cc1ecc474baaa6c0dc57daa6c2296abbe47ba7965804b45d69c855178854d75730b79e1ba581642675803a1c8076383b69e8ef66aed77170ddff77107cb155d301679700393ca4f040d86b903890cc06fe919399dedba24364aa57715c8de469342a9a0fb9972a74508652562804b0e47568d73fd595dae5a5a02741e7da9a326bc236801ff0056c62061213e40504db7bfde7979ddcfd56e7f0093c6fd589dac81b418849d5b5a66a14afec8702a80ed8ca00a4478be5a9036c37fe8b78ea0184bd6d75e5a2b9189f19ccd5bf0ba17578174250008178a43c9dac9e959103c2a265ec2cd60b07205b3dda5e1e291007599f31747ba87ecde507989dc82a765efc3278821fb642d650ffa2d30be7829414b30172902d72da7e94ae02c56699d4dbac0cc82a5947de75f4538e0ec821f357b5f21083c025ff799b9538fdb243e5389c356396112f8abcdb5dad3203a7c46e3d109402cd8a23c562b00a0d2a1dc5ba6e8ad16acca3207d26afd8dcfa84bc8262d7b3db0e108d256fef226157c23b32949eeea8d3b97bb84f77f00aca041329f3349bf1299f59f5b448fd7ff49855057137133f00d7e5d5316cda4fb1c934202e42a9c37310c7f27f462466ca143804e3dfb199a2ce5b159f4ce81849f49ec6f31d46815bd59f0c744436207a81114b094f9c64d50f087adc438e0db62bc68bc97c5e2bc03f0e12e453ae942365c3f9ab4b47ff11eb156e84e0f094fc6a74d087a010c815e4ff5a4993abb90a66dab4c75c6edd56ac36661f15c10b2319bdfb7d52df67487a7cc14";
+    const eyeOpenSVG = `<path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/>`;
+    const eyeClosedSVG = `<path d="M9.88 9.88a3 3 0 1 0 4.24 4.24"/><path d="M10.73 5.08A10.43 10.43 0 0 1 12 5c7 0 10 7 10 7a13.16 13.16 0 0 1-1.67 2.68"/><path d="M6.61 6.61A13.526 13.526 0 0 0 2 12s3 7 10 7a9.74 9.74 0 0 0 5.39-1.61"/><line x1="2" y1="2" x2="22" y2="22"/>`;
+
+    function toggleVisibility(inputId, btn) {
+        const input = document.getElementById(inputId);
+        const svg = btn.querySelector('svg');
+        if (input.type === "password") { input.type = "text"; svg.innerHTML = eyeClosedSVG; btn.classList.add('active'); } 
+        else { input.type = "password"; svg.innerHTML = eyeOpenSVG; btn.classList.remove('active'); }
+    }
+
+    async function deriveKey(passphrase, salt) {
+        const encoder = new TextEncoder();
+        const baseKey = await crypto.subtle.importKey("raw", encoder.encode(passphrase), "PBKDF2", false, ["deriveKey"]);
+        return crypto.subtle.deriveKey({ name: "PBKDF2", salt: salt, iterations: 100000, hash: "SHA-256" }, baseKey, { name: "AES-GCM", length: 256 }, false, ["decrypt"]);
+    }
+
+    async function decryptVault() {
+        // Dynamically pull values based on what inputs exist
+        const passParts = [];
+        const wordsEl = document.getElementById('words');
+        if(wordsEl && wordsEl.value.trim() === "") return alert("SYSTEM ERROR: Master Key is required.");
+        if(wordsEl) passParts.push(wordsEl.value.trim().toLowerCase());
+
+        const ans1El = document.getElementById('ans1');
+        if(ans1El) {
+            if(ans1El.value.trim() === "") return alert("SYSTEM ERROR: Question Alpha is required.");
+            passParts.push(ans1El.value.trim().toLowerCase());
+        }
+
+        const ans2El = document.getElementById('ans2');
+        if(ans2El) {
+            if(ans2El.value.trim() === "") return alert("SYSTEM ERROR: Question Beta is required.");
+            passParts.push(ans2El.value.trim().toLowerCase());
+        }
+        
+        const passphrase = passParts.join('||');
+        
+        try {
+            const rawData = new Uint8Array(ENCRYPTED_PAYLOAD.match(/.{1,2}/g).map(byte => parseInt(byte, 16)));
+            const salt = rawData.slice(0, 16);
+            const iv = rawData.slice(16, 28);
+            const ciphertext = rawData.slice(28);
+
+            const key = await deriveKey(passphrase, salt);
+            const decrypted = await crypto.subtle.decrypt({ name: "AES-GCM", iv: iv }, key, ciphertext);
+            
+            const decoder = new TextDecoder();
+            document.getElementById('unlock-output').textContent = decoder.decode(decrypted);
+            document.getElementById('result-container').classList.remove('hidden');
+        } catch (e) {
+            alert("DECRYPTION FAILED. Invalid credentials. Access denied.");
+        }
+    }
+
+    function copyDecrypted() {
+        const textToCopy = document.getElementById('unlock-output').innerText;
+        navigator.clipboard.writeText(textToCopy).then(() => {
+            const btn = document.querySelector('.copy-btn');
+            btn.innerText = "COPIED!";
+            setTimeout(() => btn.innerText = "COPY", 2000);
+        }).catch(() => {
+            // Fallback for older browsers / iframe restrictions
+            const textArea = document.createElement("textarea");
+            textArea.value = textToCopy;
+            document.body.appendChild(textArea);
+            textArea.select();
+            document.execCommand("Copy");
+            textArea.remove();
+            const btn = document.querySelector('.copy-btn');
+            btn.innerText = "COPIED!";
+            setTimeout(() => btn.innerText = "COPY", 2000);
+        });
+    }
+</script>
+</body>
+</html>
